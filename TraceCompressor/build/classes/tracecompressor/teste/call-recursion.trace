@@ -1,0 +1,13 @@
+org.argouml.uml.ui.UMLChangeDispatch,run,1,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,synchronizedDispatch,2,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,3,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,4,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,5,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,6,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,7,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,8,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,9,1439,1196689435765
+org.argouml.uml.ui.UMLChangeDispatch,dispatch,10,1439,1196689435765
+org.argouml.uml.diagram.ui.PropPanelUMLClassDiagram,getTarget,2,917,1196689435796
+org.argouml.model.Model,getFacade,2,-1,1196689435796
+org.argouml.model.uml.DefaultModelImplementation,getFacade,3,40,1196689435796

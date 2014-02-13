@@ -1,0 +1,12 @@
+org.argouml.application.api.Configuration,load,2,-1,1196689422468
+org.argouml.application.configuration.ConfigurationProperties,loadDefault,3,1,1196689422468
+org.argouml.application.configuration.ConfigurationProperties,getDefaultPath,4,1,1196689422468
+org.argouml.application.configuration.ConfigurationProperties,load,4,1,1196689422468
+org.argouml.application.configuration.ConfigurationProperties,loadFile,5,1,1196689422468
+<SEQ_START:30> 
+org.argouml.application.api.Configuration,makeKey,3,-1,1196689422484
+org.argouml.application.configuration.ConfigurationKeyImpl,<init>,4,3,1196689422500
+<SEQ_END> 
+org.argouml.application.api.Argo,getDirectory,2,-1,1196689422531
+org.tigris.gef.base.Prefs,<init>,3,33,1196689422671
+org.tigris.gef.base.Globals,getLastDirectory,3,-1,1196689422671
