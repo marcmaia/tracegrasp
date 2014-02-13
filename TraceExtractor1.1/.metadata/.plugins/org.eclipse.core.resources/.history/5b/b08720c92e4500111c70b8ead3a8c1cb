@@ -1,0 +1,183 @@
+package traceextractor.trace;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.IdentityHashMap;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.ConstructorSignature;
+import org.aspectj.lang.reflect.MethodSignature;
+
+public class TraceEventBuilder {
+	private long counter = 0;
+	private IdentityHashMap<Object,Long> objectTable = new IdentityHashMap<Object,Long>(); 
+	
+	private String getTargetClassNameFromJoinPoint(JoinPoint joinPoint) {
+		Object target = joinPoint.getTarget(); 
+		
+		if (null != target) {
+			return joinPoint.getTarget().getClass().getName();
+		}
+		
+		return joinPoint.getSignature().getDeclaringType().getName();
+	}
+	
+	private long getTargetOidFromJoinPoint(JoinPoint joinPoint) {
+		Object target = joinPoint.getTarget(); 
+		
+		if (null != target) {
+			Long value = objectTable.get(target);
+			
+			if (null == value) {
+				value = ++counter;
+				objectTable.put(target, value);
+			}
+			
+			return value.longValue();
+		}
+		
+		return TraceEvent.STATIC_CALL_OID;
+	}
+	
+	/**
+	 * This method besides gets the method and constructor names, it gets the its modifiers. 
+	 * @param joinPoint
+	 * @return
+	 */
+	private String getEventTypeSignatureFromJoinPoint(JoinPoint joinPoint) {
+		String event_sig = null;
+		
+		if (null != joinPoint.getSignature()) {
+			
+			if (joinPoint.getSignature() instanceof MethodSignature) {
+				Method method = ((MethodSignature)joinPoint.getSignature()).getMethod();
+				if (null == method) {
+//					System.out.println("-----------------------------------");
+//					System.out.println(joinPoint.getSignature().toLongString());
+//					System.out.println("Null Method - discarting call");
+//					System.out.println("-----------------------------------");
+//					System.out.flush();
+					return null;
+				}
+				event_sig = method.getName();
+							
+			} else if (joinPoint.getSignature() instanceof ConstructorSignature) {
+				Constructor constructor = ((ConstructorSignature)joinPoint.getSignature()).getConstructor();
+				if (null == constructor) {
+//					System.out.println("-----------------------------------");
+//					System.out.println(joinPoint.getSignature().toLongString());
+//					System.out.println("Null Constructor - discarting call");
+//					System.out.println("-----------------------------------");
+//					System.out.flush();
+					return null;
+				}
+				event_sig = "<init>";//constructor.getName();
+			
+			} else {
+//				System.out.println("-----------------------------------");
+//				System.out.println(joinPoint.getSignature().toLongString());
+//				System.out.println("Unsupported signature!");
+//				System.out.println("-----------------------------------");
+//				System.out.flush();
+				return null;
+			}
+		} else {
+//			System.out.println("-----------------------------------");
+//			System.out.println(joinPoint.toString());
+//			System.out.println("Null JoinPoint Signature!");
+//			System.out.println("-----------------------------------");
+//			System.out.flush();
+		}
+		
+		return event_sig;
+	}
+	
+	public String getModifierfromJoinPoint(JoinPoint joinPoint){
+		String modifier = null;
+		if (null != joinPoint.getSignature()) {
+			
+			if (joinPoint.getSignature() instanceof MethodSignature) {
+				Method method = ((MethodSignature)joinPoint.getSignature()).getMethod();
+				if (null != method) {
+					modifier = getModifiers(method.getModifiers());
+				}
+			}else if (joinPoint.getSignature() instanceof ConstructorSignature) {
+				Constructor constructor = ((ConstructorSignature)joinPoint.getSignature()).getConstructor();
+				if (null != constructor) {
+					modifier = getModifiers(constructor.getModifiers());
+										
+				}
+			}
+		}
+		return modifier;
+	}
+	
+		
+	private String getModifiers(int modify){
+		String modifier = null;
+		if(Modifier.isPublic(modify)) modifier = "public.";
+		else if (Modifier.isPrivate(modify)) modifier = "private.";
+		else if (Modifier.isProtected(modify)) modifier = "protected.";
+		else modifier = "default.";
+		
+		if (Modifier.isAbstract(modify)) modifier = modifier + " abstract.";
+		else if (Modifier.isStatic(modify)) modifier = modifier + " static.";
+		else if (Modifier.isSynchronized(modify)) modifier = "synchronized.";
+		else if (Modifier.isTransient(modify)) modifier = "transient.";
+		else if (Modifier.isStrict(modify)) modifier = "strict.";
+		else if (Modifier.isVolatile(modify)) modifier = "volatile.";
+		else if (Modifier.isNative(modify)) modifier = "Native.";	
+		return modifier;
+	}
+	
+	public String getArgsFromJoinPoint(JoinPoint joinPoint){
+		String args = null;
+		if(joinPoint.getArgs().length > 0){
+			Object[] argObj = joinPoint.getArgs();
+			StringBuilder append = new StringBuilder();
+			for(int i=0; i<argObj.length; i++){
+				if(argObj[i] instanceof String){
+					if(!((String)argObj[i]).equals("")) append.append((String)argObj[i]+",");
+				}else if(argObj[i] instanceof Integer){
+					append.append((Integer)argObj[i]+",");
+				}else if(argObj[i] instanceof Double){
+					append.append((Double)argObj[i]+",");
+				}else if(argObj[i] instanceof Float){
+					append.append((Float)argObj[i]+",");
+				}else if(argObj[i] instanceof Long){
+					append.append((Long)argObj[i]+",");
+				}else if(argObj[i] instanceof Class){
+					append.append(argObj[i].getClass().getName()+",");
+				}else if (argObj[i] instanceof Byte){
+					append.append(argObj[i]+",");
+				}else if (argObj[i] instanceof Short){
+					append.append(argObj[i]+",");
+				}else if (argObj[i] instanceof Boolean){
+					append.append(argObj[i]+",");
+				}
+			}
+			if(!append.toString().contains("") || !append.toString().contains("\n")) args = append.toString();
+		}
+		return args;
+	}
+	
+	public TraceEvent buildEventData(JoinPoint joinPoint, TraceEventType eventType, int nestingLevel) {
+		String event_type_sig = getEventTypeSignatureFromJoinPoint(joinPoint);
+		
+		if (null == event_type_sig) {
+			return null;
+		}
+		
+		TraceEvent ed = new TraceEvent();
+		String modifier = getModifierfromJoinPoint(joinPoint);
+		ed.setExecutionTime(System.currentTimeMillis());
+		ed.setThreadId(Thread.currentThread().getId());
+		ed.setTargetClassName(getTargetClassNameFromJoinPoint(joinPoint));
+		ed.setTargetOID(getTargetOidFromJoinPoint(joinPoint));
+		ed.setEventTypeSignature(modifier + event_type_sig);
+		ed.setNestingLevel(nestingLevel);
+		ed.setEventType(eventType);
+		ed.setArgs(getArgsFromJoinPoint(joinPoint));	
+		return ed;
+	}
+}

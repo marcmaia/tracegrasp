@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TraceExtractor
+Bundle-SymbolicName: TraceExtractor
+Bundle-Version: 1.0.0.qualifier
+Export-Package: traceextractor.feature,
+ traceextractor.gui,
+ traceextractor.mark,
+ traceextractor.monitor.aspectj,
+ traceextractor.register,
+ traceextractor.trace
