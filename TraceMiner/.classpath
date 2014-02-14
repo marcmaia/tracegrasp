@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="dist/lib/AbsoluteLayout.jar"/>
+	<classpathentry kind="lib" path="dist/lib/copyfile old.jar"/>
+	<classpathentry kind="lib" path="dist/lib/copyfile.jar"/>
+	<classpathentry kind="lib" path="dist/lib/junit-4.5.jar"/>
+	<classpathentry kind="lib" path="dist/lib/ReadFile.jar"/>
+	<classpathentry kind="lib" path="dist/lib/TraceCompressor.jar"/>
+	<classpathentry kind="lib" path="dist/lib/TraceMetrics.jar"/>
+	<classpathentry kind="lib" path="dist/SummarizerTool.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
