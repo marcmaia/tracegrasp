@@ -1,0 +1,1 @@
+The suite has a module for extracting traces (TraceExtractor) and an application for compressing, summarizing, visualizing and aligning traces.
